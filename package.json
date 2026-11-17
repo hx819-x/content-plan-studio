@@ -1,0 +1,13 @@
+{
+  "name": "content-plan-studio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "内容策划台",
+  "scripts": {
+    "test": "node --test test.cjs"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  }
+}

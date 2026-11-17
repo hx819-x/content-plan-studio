@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>内容策划台</title>
+    <meta name="description" content="内容策划台 · 本地运行的开源练习工具" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .plan {
+        display: grid;
+        gap: 14px;
+      }
+      .task {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 20px;
+      }
+      .task-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .task-head time {
+        font-variant-numeric: tabular-nums;
+        color: var(--muted);
+      }
+      .task-head select {
+        margin-left: auto;
+        width: 110px;
+        padding: 5px;
+      }
+      .task .title-input {
+        font-size: 18px;
+        font-weight: 650;
+        border-color: transparent;
+        padding: 4px 0;
+        margin-bottom: 8px;
+      }
+      .task .title-input:focus {
+        border-color: var(--line);
+        padding-left: 8px;
+      }
+      .task p {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 12px;
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 24px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <span class="mark">CP</span><span class="brand">内容策划台</span
+        ><small>本地运行 · 无需登录 · 开源</small>
+      </nav>
+    </header>
+    <main>
+      <section class="hero">
+        <div>
+          <div class="eyebrow">01 / Content operations</div>
+          <h1>把一个想法，变成一周行动。</h1>
+          <p>
+            明确受众、信息依据和行动目标，编排内容，再逐条推进。规则模板生成初稿，最终判断由你完成。
+          </p>
+        </div>
+        <div class="actions">
+          <button id="demo">加载模拟案例</button
+          ><button id="export">导出策划案</button
+          ><button id="backup">备份 JSON</button>
+        </div>
+      </section>
+      <div
+        id="notice"
+        class="notice"
+        role="status"
+        aria-live="polite"
+        hidden
+      ></div>
+      <div class="workspace">
+        <aside class="panel">
+          <h2>01 / 策划输入</h2>
+          <form id="brief">
+            <div class="field">
+              <label for="project">项目主题</label
+              ><input
+                id="project"
+                maxlength="100"
+                required
+                placeholder="例如：城市书店周末读书会"
+              />
+            </div>
+            <div class="field">
+              <label for="audience">具体受众</label
+              ><input
+                id="audience"
+                maxlength="200"
+                required
+                placeholder="谁，在什么情境下，需要什么"
+              />
+            </div>
+            <div class="field">
+              <label for="objective">希望用户完成的行动</label
+              ><input
+                id="objective"
+                maxlength="200"
+                required
+                placeholder="例如：阅读活动说明并完成报名"
+              />
+            </div>
+            <div class="field">
+              <label for="message">核心信息</label
+              ><textarea
+                id="message"
+                maxlength="1000"
+                required
+                placeholder="一次只讲清一个价值"
+              ></textarea>
+            </div>
+            <div class="field">
+              <label for="evidence">信息依据 / 待核实项</label
+              ><textarea
+                id="evidence"
+                maxlength="1000"
+                placeholder="记录来源、限制和仍需确认的事实"
+              ></textarea>
+            </div>
+            <div class="split">
+              <div class="field">
+                <label for="start">开始日期</label
+                ><input id="start" type="date" required />
+              </div>
+              <div class="field">
+                <label for="days">计划天数</label
+                ><select id="days">
+                  <option>7</option>
+                  <option>14</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="channels">发布渠道（逗号分隔）</label
+              ><input
+                id="channels"
+                maxlength="150"
+                required
+                placeholder="小红书,公众号,短视频"
+              />
+            </div>
+            <button class="primary" type="submit">生成内容计划</button>
+            <p class="help">重新生成会替换下方计划；先导出可保留修改。</p>
+          </form>
+          <hr />
+          <div class="field">
+            <label for="restore">恢复本工具的 JSON 备份</label
+            ><input id="restore" type="file" accept=".json" />
+          </div>
+          <button id="clear">清空本地草稿</button>
+        </aside>
+        <div class="stack">
+          <section class="cards" id="stats" aria-label="计划概览"></section>
+          <section class="panel">
+            <div class="section-title">
+              <h2>02 / 发布前检查</h2>
+              <span class="pill">人工核实</span>
+            </div>
+            <ul id="checks"></ul>
+            <p class="help">
+              填写来源不代表已经核实。模板里的指标是观察方向，不是承诺的结果。
+            </p>
+          </section>
+          <section>
+            <div class="section-title">
+              <h2>03 / 内容日程</h2>
+              <span id="saved" class="muted compact">自动保存在此浏览器</span>
+            </div>
+            <div id="plan" class="plan"></div>
+          </section>
+        </div>
+      </div>
+    </main>
+    <footer>
+      hx819-x / content-plan-studio · MIT · Codex 辅助开发的学习作品 ·
+      示例为模拟数据<br />内容在浏览器内处理；仅策划台和评测台在当前浏览器保存草稿。导出文件请自行保管。
+    </footer>
+    <script src="core.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
